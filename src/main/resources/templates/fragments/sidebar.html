@@ -69,6 +69,13 @@
 	           th:classappend="${active=='beneficios'}?'active'" class="nav-item">
 	            <i class="ti ti-file-text"></i> Beneficios TyI
 	        </a>
+			
+			<a th:href="@{/coordinador/pagos}"
+			   th:classappend="${active == 'pagos'} ? ' active' : ''"
+			   class="nav-link">
+			    <i class="ti ti-credit-card"></i>
+			    <span>Pagos</span>
+			</a>
 	    </div>
 
 	<!-- ── DOCENTE ── -->

@@ -299,6 +299,74 @@ public class CoordinadorController {
         });
         return "coordinador/puntajes-alumno";
     }
+    
+ // ── PAGOS ─────────────────────────────────────────────────────
+    @GetMapping("/pagos")
+    public String pagos(@AuthenticationPrincipal UserDetails ud, Model model,
+                        @RequestParam(required = false) String filtro,
+                        @RequestParam(required = false) String estado) {
+        model.addAttribute("usuario", usuarioService.findByEmail(ud.getUsername()).orElseThrow());
+        model.addAttribute("active", "pagos");
+
+        List<Estudiante> todos = estudianteService.findAll();
+
+        long conComprobante    = todos.stream().filter(e -> e.getComprobantePago() != null && !e.getComprobantePago().isBlank()).count();
+        long sinComprobante    = todos.size() - conComprobante;
+        long pendientesAprobar = todos.stream().filter(e ->
+            e.getComprobantePago() != null && !e.getComprobantePago().isBlank() &&
+            e.getEstadoInscripcion() == EstadoInscripcion.PENDIENTE).count();
+
+        List<Estudiante> lista = todos;
+
+        if ("con_pago".equals(estado)) {
+            lista = lista.stream().filter(e -> e.getComprobantePago() != null && !e.getComprobantePago().isBlank()).collect(Collectors.toList());
+        } else if ("sin_pago".equals(estado)) {
+            lista = lista.stream().filter(e -> e.getComprobantePago() == null || e.getComprobantePago().isBlank()).collect(Collectors.toList());
+        } else if ("pendiente".equals(estado)) {
+            lista = lista.stream().filter(e ->
+                e.getComprobantePago() != null && !e.getComprobantePago().isBlank() &&
+                e.getEstadoInscripcion() == EstadoInscripcion.PENDIENTE).collect(Collectors.toList());
+        }
+
+        if (filtro != null && !filtro.isBlank()) {
+            String f = filtro.toLowerCase();
+            lista = lista.stream().filter(e ->
+                e.getUsuario().getNombre().toLowerCase().contains(f) ||
+                e.getUsuario().getApellido().toLowerCase().contains(f) ||
+                e.getDocumento().contains(f)
+            ).collect(Collectors.toList());
+        }
+
+        model.addAttribute("estudiantes",      lista);
+        model.addAttribute("filtro",           filtro);
+        model.addAttribute("estadoFiltro",     estado);
+        model.addAttribute("conComprobante",   conComprobante);
+        model.addAttribute("sinComprobante",   sinComprobante);
+        model.addAttribute("pendientesAprobar",pendientesAprobar);
+        return "coordinador/pagos";
+    }
+
+    @PostMapping("/pagos/{id}/aprobar")
+    public String aprobarPago(@PathVariable Long id, RedirectAttributes ra) {
+        estudianteService.findById(id).ifPresent(e -> {
+            e.setEstadoInscripcion(EstadoInscripcion.HABILITADO);
+            e.setTipoExamen(TipoExamen.SABER_PRO);
+            estudianteService.save(e);
+        });
+        ra.addFlashAttribute("mensaje", "Pago aprobado. Estudiante habilitado correctamente.");
+        return "redirect:/coordinador/pagos";
+    }
+
+    @PostMapping("/pagos/{id}/rechazar")
+    public String rechazarPago(@PathVariable Long id, RedirectAttributes ra) {
+        estudianteService.findById(id).ifPresent(e -> {
+            e.setComprobantePago(null);
+            e.setEstadoInscripcion(EstadoInscripcion.NO_HABILITADO);
+            estudianteService.save(e);
+        });
+        ra.addFlashAttribute("mensaje", "Comprobante rechazado. Estudiante marcado como no habilitado.");
+        return "redirect:/coordinador/pagos";
+    }
 
     // ── GUARDAR PUNTAJES ──────────────────────────────────────────
     @PostMapping("/alumnos/{id}/puntajes")
