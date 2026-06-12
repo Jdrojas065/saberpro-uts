@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Configuración · Saber Pro UTS</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('configuracion')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Configuración del Sistema')}"></div>
+        <main class="content-area">
+
+            <div th:if="${mensaje}" class="alert-box alert-success auto-hide">
+                <i class="ti ti-check"></i>
+                <span th:text="${mensaje}"></span>
+            </div>
+
+            <div class="two-cols">
+                <div>
+                    <p class="section-title">Configuración general</p>
+                    <div class="form-card">
+                        <form th:action="@{/admin/configuracion/guardar}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <div class="form-group">
+                                <label>Nombre de la institución</label>
+                                <input type="text" name="institucion"
+                                       value="Unidades Tecnológicas de Santander"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Correo institucional de contacto</label>
+                                <input type="email" name="correoContacto"
+                                       value="saberpro@uts.edu.co"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Período académico activo</label>
+                                <select name="periodo">
+                                    <option selected>2025-1</option>
+                                    <option>2025-2</option>
+                                    <option>2026-1</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Puntaje mínimo de habilitación</label>
+                                <input type="number" name="puntajeMinimo"
+                                       value="120" min="0" max="300"/>
+                            </div>
+                            <button type="submit" class="btn btn-secondary" style="width:100%;">
+                                <i class="ti ti-device-floppy"></i> Guardar configuración
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div>
+                        <p class="section-title">Información del sistema</p>
+                        <div class="card-block">
+                            <div class="alert-item">
+                                <div class="alert-dot ad-green"></div>
+                                <div><strong>Versión:</strong> 1.0.0</div>
+                            </div>
+                            <div class="alert-item">
+                                <div class="alert-dot ad-green"></div>
+                                <div><strong>Framework:</strong> Spring Boot 3.2.5</div>
+                            </div>
+                            <div class="alert-item">
+                                <div class="alert-dot ad-green"></div>
+                                <div><strong>Java:</strong> 21</div>
+                            </div>
+                            <div class="alert-item">
+                                <div class="alert-dot ad-gold"></div>
+                                <div><strong>Base de datos:</strong> H2 (desarrollo)</div>
+                            </div>
+                            <div class="alert-item">
+                                <div class="alert-dot ad-green"></div>
+                                <div><strong>Estado:</strong> En línea</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="section-title">Acciones rápidas</p>
+                        <div class="card-block">
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <a th:href="@{/h2-console}" target="_blank"
+                                   class="btn btn-outline" style="justify-content:flex-start;">
+                                    <i class="ti ti-database"></i> Consola H2
+                                </a>
+                                <a th:href="@{/admin/usuarios}"
+                                   class="btn btn-outline" style="justify-content:flex-start;">
+                                    <i class="ti ti-users"></i> Gestionar usuarios
+                                </a>
+                                <a th:href="@{/admin/programas}"
+                                   class="btn btn-outline" style="justify-content:flex-start;">
+                                    <i class="ti ti-school"></i> Gestionar programas
+                                </a>
+                                <a th:href="@{/admin/perfil}"
+                                   class="btn btn-outline" style="justify-content:flex-start;">
+                                    <i class="ti ti-user-edit"></i> Editar mi perfil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

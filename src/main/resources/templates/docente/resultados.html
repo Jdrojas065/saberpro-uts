@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Resultados · Docente</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('resultados')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Resultados')}"></div>
+        <main class="content-area">
+
+            <p class="section-title">Puntaje global por estudiante</p>
+            <div class="table-card" style="margin-bottom:1.5rem;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Programa</th>
+                            <th>Estado</th>
+                            <th>Simulacros</th>
+                            <th>Promedio</th>
+                            <th>Último puntaje</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="r : ${resumenGlobal}">
+                            <td style="font-weight:500;" th:text="${r.nombre}">—</td>
+                            <td th:text="${r.programa}">—</td>
+                            <td>
+                                <span th:if="${r.estado == 'HABILITADO'}"    class="badge b-green">Habilitado</span>
+                                <span th:if="${r.estado == 'PENDIENTE'}"     class="badge b-gold">Pendiente</span>
+                                <span th:if="${r.estado == 'NO_HABILITADO'}" class="badge b-red">No habilitado</span>
+                            </td>
+                            <td th:text="${r.totalSimulacros}">0</td>
+                            <td>
+                                <span th:if="${r.promedio != null}"
+                                      th:text="${r.promedio + ' pts'}"
+                                      th:class="${r.promedio >= 160} ? 'badge b-green' :
+                                                 (${r.promedio >= 130} ? 'badge b-gold' : 'badge b-red')">
+                                </span>
+                                <span th:if="${r.promedio == null}"
+                                      style="color:var(--text-tertiary);font-size:12px;">Sin datos</span>
+                            </td>
+                            <td th:text="${r.ultimoPuntaje != null} ? ${r.ultimoPuntaje + ' pts'} : '—'">—</td>
+                            <td>
+                                <a th:href="@{/docente/resultados(estudianteId=${r.id})}"
+                                   class="btn btn-outline" style="padding:4px 10px;font-size:12px;">
+                                    <i class="ti ti-eye"></i> Ver
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(resumenGlobal)}">
+                            <td colspan="7" style="text-align:center;color:var(--text-tertiary);">
+                                Sin datos disponibles
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Detalle estudiante seleccionado -->
+            <div th:if="${estudianteSeleccionado != null}">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <p class="section-title" style="margin:0;">
+                        Detalle de:
+                        <strong th:text="${estudianteSeleccionado.usuario.nombre
+                                          + ' ' + estudianteSeleccionado.usuario.apellido}">—</strong>
+                    </p>
+                    <a th:href="@{/docente/resultados}" class="btn btn-outline"
+                       style="padding:4px 10px;font-size:12px;">
+                        <i class="ti ti-x"></i> Cerrar
+                    </a>
+                </div>
+
+                <div th:if="${#lists.isEmpty(resultadosDetalle)}" class="card-block">
+                    <div class="alert-item">
+                        <div class="alert-dot ad-gold"></div>
+                        <div>Este estudiante no tiene resultados registrados.</div>
+                    </div>
+                </div>
+
+                <div th:each="res : ${resultadosDetalle}" class="card-block" style="margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                        <div>
+                            <div style="font-weight:600;font-size:14px;">
+                                <span th:if="${res.simulacro != null}" th:text="${res.simulacro.nombre}">—</span>
+                                <span th:unless="${res.simulacro != null}">Examen oficial</span>
+                            </div>
+                            <div style="font-size:12px;color:var(--text-tertiary);"
+                                 th:text="${#temporals.format(res.fecha,'dd/MM/yyyy HH:mm')}">—</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:28px;font-weight:700;"
+                                 th:class="${res.puntaje >= 160} ? 'estado-habilitado' :
+                                            (${res.puntaje >= 130} ? 'estado-pendiente' : 'estado-no_habilitado')"
+                                 th:text="${res.puntaje + ' pts'}">0 pts</div>
+                            <div style="font-size:11px;color:var(--text-tertiary);">Puntaje global</div>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <p style="font-size:13px;font-weight:600;margin:12px 0 10px;">Puntaje por competencia</p>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:12px;">
+                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Lectura Crítica</div>
+                            <div style="font-size:20px;font-weight:600;"
+                                 th:text="${res.puntajeLecturaCritica != null ? res.puntajeLecturaCritica + ' pts' : 'N/A'}">N/A</div>
+                            <div style="margin-top:8px;background:var(--border-tertiary);border-radius:3px;height:6px;">
+                                <div th:if="${res.puntajeLecturaCritica != null}"
+                                     th:style="'width:' + ${(res.puntajeLecturaCritica / 300.0) * 100} + '%;height:100%;background:var(--uts-green);border-radius:3px;max-width:100%;'"></div>
+                            </div>
+                        </div>
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:12px;">
+                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Razon. Cuantitativo</div>
+                            <div style="font-size:20px;font-weight:600;"
+                                 th:text="${res.puntajeRazonamientoCuantitativo != null ? res.puntajeRazonamientoCuantitativo + ' pts' : 'N/A'}">N/A</div>
+                            <div style="margin-top:8px;background:var(--border-tertiary);border-radius:3px;height:6px;">
+                                <div th:if="${res.puntajeRazonamientoCuantitativo != null}"
+                                     th:style="'width:' + ${(res.puntajeRazonamientoCuantitativo / 300.0) * 100} + '%;height:100%;background:var(--uts-green);border-radius:3px;max-width:100%;'"></div>
+                            </div>
+                        </div>
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:12px;">
+                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Comp. Ciudadanas</div>
+                            <div style="font-size:20px;font-weight:600;"
+                                 th:text="${res.puntajeCompetenciasCiudadanas != null ? res.puntajeCompetenciasCiudadanas + ' pts' : 'N/A'}">N/A</div>
+                            <div style="margin-top:8px;background:var(--border-tertiary);border-radius:3px;height:6px;">
+                                <div th:if="${res.puntajeCompetenciasCiudadanas != null}"
+                                     th:style="'width:' + ${(res.puntajeCompetenciasCiudadanas / 300.0) * 100} + '%;height:100%;background:var(--uts-gold);border-radius:3px;max-width:100%;'"></div>
+                            </div>
+                        </div>
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:12px;">
+                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Comunicación Escrita</div>
+                            <div style="font-size:20px;font-weight:600;"
+                                 th:text="${res.puntajeComunicacionEscrita != null ? res.puntajeComunicacionEscrita + ' pts' : 'N/A'}">N/A</div>
+                            <div style="margin-top:8px;background:var(--border-tertiary);border-radius:3px;height:6px;">
+                                <div th:if="${res.puntajeComunicacionEscrita != null}"
+                                     th:style="'width:' + ${(res.puntajeComunicacionEscrita / 300.0) * 100} + '%;height:100%;background:var(--uts-green);border-radius:3px;max-width:100%;'"></div>
+                            </div>
+                        </div>
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:12px;">
+                            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">Inglés</div>
+                            <div style="font-size:20px;font-weight:600;"
+                                 th:text="${res.puntajeIngles != null ? res.puntajeIngles + ' pts' : 'N/A'}">N/A</div>
+                            <div style="margin-top:8px;background:var(--border-tertiary);border-radius:3px;height:6px;">
+                                <div th:if="${res.puntajeIngles != null}"
+                                     th:style="'width:' + ${(res.puntajeIngles / 300.0) * 100} + '%;height:100%;background:#1a56db;border-radius:3px;max-width:100%;'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

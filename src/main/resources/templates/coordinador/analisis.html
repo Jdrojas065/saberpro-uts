@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Análisis · Coordinador</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('analisis')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Análisis Académico')}"></div>
+        <main class="content-area">
+
+            <!-- Stats globales -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon si-blue"><i class="ti ti-users"></i></div>
+                    <div class="stat-label">Total estudiantes</div>
+                    <div class="stat-value" th:text="${totalEstudiantes}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-check"></i></div>
+                    <div class="stat-label">Habilitados</div>
+                    <div class="stat-value" th:text="${habilitados}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-clock"></i></div>
+                    <div class="stat-label">Pendientes</div>
+                    <div class="stat-value" th:text="${pendientes}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-red"><i class="ti ti-x"></i></div>
+                    <div class="stat-label">No habilitados</div>
+                    <div class="stat-value" th:text="${noHabilitados}">0</div>
+                </div>
+            </div>
+
+            <div class="two-cols" style="align-items:start;">
+
+                <!-- Distribución por estado -->
+                <div>
+                    <p class="section-title">Distribución por estado de inscripción</p>
+                    <div class="card-block">
+                        <div style="margin-bottom:14px;">
+                            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+                                <span style="color:var(--uts-green-dark); font-weight:500;">Habilitados</span>
+                                <span th:text="${pctHab + '%'}">0%</span>
+                            </div>
+                            <div style="background:var(--bg-tertiary); border-radius:4px; height:10px; width:100%;">
+                                <div th:style="'width:' + ${pctHab} + '%; height:100%; background:var(--uts-green); border-radius:4px;'"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:14px;">
+                            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+                                <span style="color:var(--uts-gold); font-weight:500;">Pendientes</span>
+                                <span th:text="${pctPend + '%'}">0%</span>
+                            </div>
+                            <div style="background:var(--bg-tertiary); border-radius:4px; height:10px; width:100%;">
+                                <div th:style="'width:' + ${pctPend} + '%; height:100%; background:var(--uts-gold); border-radius:4px;'"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+                                <span style="color:var(--uts-red); font-weight:500;">No habilitados</span>
+                                <span th:text="${pctNoHab + '%'}">0%</span>
+                            </div>
+                            <div style="background:var(--bg-tertiary); border-radius:4px; height:10px; width:100%;">
+                                <div th:style="'width:' + ${pctNoHab} + '%; height:100%; background:var(--uts-red); border-radius:4px;'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Por programa -->
+                <div>
+                    <p class="section-title">Habilitación por programa</p>
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr><th>Programa</th><th>Total</th><th>Hab.</th><th>%</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${porPrograma}">
+                                    <td>
+                                        <div th:text="${p.nombre}" style="font-weight:500;">—</div>
+                                        <div style="font-size:11px; color:var(--text-tertiary);"
+                                             th:text="${p.codigo}">—</div>
+                                    </td>
+                                    <td th:text="${p.total}">0</td>
+                                    <td th:text="${p.habilitados}">0</td>
+                                    <td>
+                                        <span th:text="${p.pct + '%'}"
+                                              th:class="${p.pct >= 80} ? 'badge b-green' :
+                                                         (${p.pct >= 50} ? 'badge b-gold' : 'badge b-red')">0%</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(porPrograma)}">
+                                    <td colspan="4" style="text-align:center; color:var(--text-tertiary);">
+                                        Sin datos
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

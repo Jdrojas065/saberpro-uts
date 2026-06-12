@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Dashboard · Estudiante</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Portal del Estudiante')}"></div>
+        <main class="content-area">
+
+            <!-- Stats -->
+            <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-file-certificate"></i></div>
+                    <div class="stat-label">Estado de Inscripción</div>
+                    <div class="stat-value" style="font-size:14px; text-transform:capitalize;"
+                         th:text="${estudiante != null ? estudiante.estadoInscripcion.name() : '—'}">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-blue"><i class="ti ti-trophy"></i></div>
+                    <div class="stat-label">Último Puntaje Global</div>
+                    <div class="stat-value" th:text="${ultimoPuntaje > 0 ? ultimoPuntaje + ' pts' : '—'}">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-chart-bar"></i></div>
+                    <div class="stat-label">Nivel</div>
+                    <div class="stat-value" style="font-size:16px;"
+                         th:text="${ultimoPuntaje > 0 ? nivelPuntaje : '—'}">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-red"><i class="ti ti-calendar"></i></div>
+                    <div class="stat-label">Próximo Examen</div>
+                    <div class="stat-value" style="font-size:14px;"
+                         th:text="${convocatoria != null ? #temporals.format(convocatoria.fecha,'dd MMM yy') : 'N/A'}">N/A</div>
+                </div>
+            </div>
+
+            <!-- Info programa -->
+            <div class="two-cols" style="margin-bottom:1rem;">
+                <div class="card-block">
+                    <p class="section-title">Mi Información</p>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">Programa</div>
+                            <div style="font-weight:600; font-size:13px;"
+                                 th:text="${estudiante != null and estudiante.programa != null ? estudiante.programa.nombre : '—'}">—</div>
+                        </div>
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">Tipo Examen</div>
+                            <div>
+                                <span th:if="${estudiante != null and estudiante.tipoExamen != null}"
+                                      th:class="${estudiante.tipoExamen.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'"
+                                      th:text="${estudiante.tipoExamen.name() == 'SABER_PRO'} ? 'Saber Pro' : 'Saber TyT'">—</span>
+                                <span th:unless="${estudiante != null and estudiante.tipoExamen != null}"
+                                      class="badge b-gold">Sin asignar</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">Documento</div>
+                            <div style="font-weight:600; font-size:13px;"
+                                 th:text="${estudiante != null ? estudiante.documento : '—'}">—</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <p class="section-title">Estado de Beneficios</p>
+                    <div th:if="${estudiante != null and estudiante.estadoInscripcion.name() == 'HABILITADO'}"
+                         class="alert-item">
+                        <div class="alert-dot ad-green"></div>
+                        <div>Estás <strong>habilitado</strong> para presentar el examen Saber Pro.</div>
+                    </div>
+                    <div th:if="${estudiante != null and estudiante.estadoInscripcion.name() == 'PENDIENTE'}"
+                         class="alert-item">
+                        <div class="alert-dot ad-gold"></div>
+                        <div>Tu inscripción está <strong>pendiente</strong> de aprobación.</div>
+                    </div>
+                    <div th:if="${estudiante != null and estudiante.estadoInscripcion.name() == 'NO_HABILITADO'}"
+                         class="alert-item">
+                        <div class="alert-dot ad-red"></div>
+                        <div>No estás habilitado actualmente. Contacta a tu coordinador.</div>
+                    </div>
+                    <div th:if="${estudiante == null}" class="alert-item">
+                        <div class="alert-dot ad-gold"></div>
+                        <div>No se encontró información de estudiante asociada.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accesos rápidos -->
+            <p class="section-title">Mis Opciones</p>
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+                <a th:href="@{/estudiante/identificacion}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                    <div class="stat-icon si-blue"><i class="ti ti-id-badge"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Mis Datos Personales</div>
+                </a>
+                <a th:href="@{/estudiante/mi-resultado}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                    <div class="stat-icon si-gold"><i class="ti ti-star"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Mi Último Resultado</div>
+                </a>
+                <a th:href="@{/estudiante/mis-resultados}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                    <div class="stat-icon si-green"><i class="ti ti-chart-line"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Todos mis Resultados</div>
+                </a>
+            </div>
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr); margin-top:0;">
+                <a th:href="@{/estudiante/beneficios}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                    <div class="stat-icon si-red"><i class="ti ti-gift"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Beneficios Obtenidos</div>
+                </a>
+                <a th:href="@{/estudiante/resolucion}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                    <div class="stat-icon si-blue"><i class="ti ti-file-text"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Resolución Beneficios TyI</div>
+                </a>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Puntajes Saber Pro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('alumnos')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Registrar Puntajes Saber Pro')}"></div>
+        <main class="content-area">
+
+            <div th:if="${estudiantePuntaje == null}" class="card-block" style="text-align:center;padding:3rem;">
+                <i class="ti ti-alert-circle" style="font-size:48px;color:var(--border-secondary);display:block;margin-bottom:12px;"></i>
+                <div style="font-weight:600;color:var(--text-secondary);">Estudiante no encontrado.</div>
+                <a th:href="@{/coordinador/alumnos}" class="btn btn-secondary" style="margin-top:16px;">
+                    <i class="ti ti-arrow-left"></i> Volver
+                </a>
+            </div>
+
+            <div th:if="${estudiantePuntaje != null}">
+
+                <!-- Info estudiante -->
+                <div class="card-block" style="margin-bottom:1.5rem; padding:14px 20px;
+                     display:flex; align-items:center; gap:14px;">
+                    <div class="stat-icon si-blue" style="width:40px;height:40px;flex-shrink:0;">
+                        <i class="ti ti-user"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600;font-size:15px;"
+                             th:text="${estudiantePuntaje.usuario.nombre + ' ' + estudiantePuntaje.usuario.apellido}">—</div>
+                        <div style="font-size:12px;color:var(--text-secondary);"
+                             th:text="'Doc: ' + ${estudiantePuntaje.documento}">—</div>
+                    </div>
+                    <div style="margin-left:auto;">
+                        <span class="badge b-green" th:if="${resultadoExistente != null}">
+                            Tiene resultado previo
+                        </span>
+                        <span class="badge b-gold" th:unless="${resultadoExistente != null}">
+                            Sin resultado
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Formulario puntajes -->
+                <div class="card-block">
+                    <p class="section-title">
+                        <i class="ti ti-chart-bar"></i> Puntajes del Examen Saber Pro
+                    </p>
+
+                    <form th:action="@{'/coordinador/alumnos/' + ${estudiantePuntaje.id} + '/puntajes'}"
+                          method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <!-- Puntaje global -->
+                        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);
+                                    padding:16px;margin-bottom:1.5rem;">
+                            <label style="font-size:13px;font-weight:600;color:var(--uts-red);
+                                          display:block;margin-bottom:8px;">
+                                <i class="ti ti-trophy"></i> Puntaje Global (obligatorio)
+                            </label>
+                            <input class="form-control"
+                                   style="font-size:18px;font-weight:600;width:200px;"
+                                   type="number" name="puntaje" min="0" max="300" required
+                                   th:value="${resultadoExistente != null ? resultadoExistente.puntaje : ''}"/>
+                        </div>
+
+                        <!-- Competencias genéricas -->
+                        <p style="font-size:13px;font-weight:600;color:var(--text-secondary);
+                                  margin-bottom:12px;">Competencias Genericas</p>
+                        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1.5rem;">
+
+                            <div>
+                                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                                    <i class="ti ti-pencil"></i> Comunicacion Escrita
+                                </label>
+                                <input class="form-control" type="number" name="comunicacionEscrita"
+                                       min="0" max="300"
+                                       th:value="${resultadoExistente != null ? resultadoExistente.puntajeComunicacionEscrita : ''}"/>
+                            </div>
+
+                            <div>
+                                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                                    <i class="ti ti-calculator"></i> Razonamiento Cuantitativo
+                                </label>
+                                <input class="form-control" type="number" name="razonamientoCuantitativo"
+                                       min="0" max="300"
+                                       th:value="${resultadoExistente != null ? resultadoExistente.puntajeRazonamientoCuantitativo : ''}"/>
+                            </div>
+
+                            <div>
+                                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                                    <i class="ti ti-book"></i> Lectura Critica
+                                </label>
+                                <input class="form-control" type="number" name="lecturaCritica"
+                                       min="0" max="300"
+                                       th:value="${resultadoExistente != null ? resultadoExistente.puntajeLecturaCritica : ''}"/>
+                            </div>
+
+                            <div>
+                                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                                    <i class="ti ti-users"></i> Competencias Ciudadanas
+                                </label>
+                                <input class="form-control" type="number" name="competenciasCiudadanas"
+                                       min="0" max="300"
+                                       th:value="${resultadoExistente != null ? resultadoExistente.puntajeCompetenciasCiudadanas : ''}"/>
+                            </div>
+
+                            <div>
+                                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                                    <i class="ti ti-language"></i> Ingles
+                                </label>
+                                <input class="form-control" type="number" name="ingles"
+                                       min="0" max="300"
+                                       th:value="${resultadoExistente != null ? resultadoExistente.puntajeIngles : ''}"/>
+                            </div>
+
+                        </div>
+
+                        <!-- Competencias especificas -->
+                        <p style="font-size:13px;font-weight:600;color:var(--text-secondary);
+                                  margin-bottom:12px;">Competencias Especificas - Ingenieria de Sistemas</p>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;">
+
+                            <div>
+                                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                                    <i class="ti ti-briefcase"></i> Formulacion de Proyectos de Ingenieria
+                                </label>
+                                <input class="form-control" type="number" name="formulacionProyectos"
+                                       min="0" max="300"
+                                       th:value="${resultadoExistente != null ? resultadoExistente.formulacionProyectos : ''}"/>
+                            </div>
+
+                            <div>
+                                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                                    <i class="ti ti-math"></i> Pensamiento Cientifico - Matematicas y Estadistica
+                                </label>
+                                <input class="form-control" type="number" name="pensamientoCientifico"
+                                       min="0" max="300"
+                                       th:value="${resultadoExistente != null ? resultadoExistente.pensamientoCientifico : ''}"/>
+                            </div>
+
+                            <div>
+                                <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                                    <i class="ti ti-code"></i> Diseno de Software
+                                </label>
+                                <input class="form-control" type="number" name="disenoSoftware"
+                                       min="0" max="300"
+                                       th:value="${resultadoExistente != null ? resultadoExistente.disenoSoftware : ''}"/>
+                            </div>
+
+                        </div>
+
+                        <div style="display:flex;gap:10px;">
+                            <button class="btn btn-secondary" type="submit">
+                                <i class="ti ti-device-floppy"></i> Guardar Puntajes
+                            </button>
+                            <a th:href="@{/coordinador/alumnos}" class="btn btn-outline">
+                                <i class="ti ti-x"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

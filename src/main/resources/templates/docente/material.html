@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Material de Apoyo · Docente</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('material')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Material de Apoyo')}"></div>
+        <main class="content-area">
+
+            <div th:if="${mensaje}" class="alert-box alert-success auto-hide">
+                <i class="ti ti-check"></i><span th:text="${mensaje}"></span>
+            </div>
+
+            <div class="two-cols" style="align-items:start;">
+
+                <!-- Lista de materiales -->
+                <div>
+                    <p class="section-title">Materiales publicados</p>
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr><th>Nombre</th><th>Tipo</th><th>Fecha</th><th>Tamaño</th><th>Acción</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="m : ${materiales}">
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <div th:if="${m.tipo == 'PDF'}"
+                                                 style="width:28px;height:28px;border-radius:6px;
+                                                        background:var(--uts-red-light);display:flex;
+                                                        align-items:center;justify-content:center;flex-shrink:0;">
+                                                <i class="ti ti-file-type-pdf" style="color:var(--uts-red);font-size:14px;"></i>
+                                            </div>
+                                            <div th:if="${m.tipo == 'VIDEO'}"
+                                                 style="width:28px;height:28px;border-radius:6px;
+                                                        background:#e8f0fe;display:flex;
+                                                        align-items:center;justify-content:center;flex-shrink:0;">
+                                                <i class="ti ti-video" style="color:#1a56db;font-size:14px;"></i>
+                                            </div>
+                                            <div th:if="${m.tipo == 'DOCX'}"
+                                                 style="width:28px;height:28px;border-radius:6px;
+                                                        background:var(--uts-green-light);display:flex;
+                                                        align-items:center;justify-content:center;flex-shrink:0;">
+                                                <i class="ti ti-file-type-doc" style="color:var(--uts-green-dark);font-size:14px;"></i>
+                                            </div>
+                                            <span style="font-weight:500;font-size:13px;" th:text="${m.nombre}">—</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span th:text="${m.tipo}"
+                                              th:class="${m.tipo == 'PDF'} ? 'badge b-red' :
+                                                         (${m.tipo == 'VIDEO'} ? 'badge b-blue' : 'badge b-green')">—</span>
+                                    </td>
+                                    <td th:text="${m.fecha}" style="font-size:12px;color:var(--text-secondary);">—</td>
+                                    <td th:text="${m.tamaño}" style="font-size:12px;color:var(--text-tertiary);">—</td>
+                                    <td>
+                                        <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;">
+                                            <i class="ti ti-download"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(materiales)}">
+                                    <td colspan="5" style="text-align:center;color:var(--text-tertiary);">
+                                        Sin materiales publicados
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Subir nuevo material -->
+                <div>
+                    <p class="section-title">Subir nuevo material</p>
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Nombre del material</label>
+                            <input type="text" placeholder="Ej. Guía de Lectura Crítica"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select>
+                                <option value="">Seleccionar tipo...</option>
+                                <option value="PDF">PDF</option>
+                                <option value="VIDEO">Video</option>
+                                <option value="DOCX">Documento Word</option>
+                                <option value="OTRO">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea rows="3" placeholder="Breve descripción del material..."
+                                      style="resize:vertical;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Archivo</label>
+                            <input type="file"/>
+                        </div>
+                        <button type="button" class="btn btn-secondary" style="width:100%;">
+                            <i class="ti ti-upload"></i> Subir material
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

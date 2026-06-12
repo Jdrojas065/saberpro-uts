@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Beneficios · Estudiante</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('beneficios')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Beneficios Obtenidos')}"></div>
+        <main class="content-area">
+
+            <!-- CON BECA -->
+            <div th:if="${tieneBeca}">
+                <div class="card-block" style="background:var(--uts-green); text-align:center; padding:2rem; margin-bottom:1.5rem;">
+                    <i class="ti ti-trophy" style="font-size:44px; color:rgba(255,255,255,.9); display:block; margin-bottom:10px;"></i>
+                    <div style="font-size:22px; font-weight:700; color:white; margin-bottom:4px;">¡FELICITACIONES!</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,.75);">Exoneración nota 5.0 + Beca 100% – Puntaje superior a 241</div>
+                </div>
+
+                <div class="two-cols">
+                    <div class="card-block">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                            <div class="stat-icon si-green" style="width:36px;height:36px;flex-shrink:0;">
+                                <i class="ti ti-file-certificate"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:600; font-size:14px;">Exoneración de Trabajo de Grado</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">Has sido exonerado del trabajo de grado.</div>
+                            </div>
+                        </div>
+                        <span class="badge b-green" style="font-size:14px; padding:4px 16px;">5.0 / 5.0</span>
+                    </div>
+                    <div class="card-block">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                            <div class="stat-icon si-blue" style="width:36px;height:36px;flex-shrink:0;">
+                                <i class="ti ti-school"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:600; font-size:14px;">Beca de Derechos de Grado</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">Descuento en tus derechos de grado.</div>
+                            </div>
+                        </div>
+                        <span class="badge b-blue" style="font-size:14px; padding:4px 16px;">100%</span>
+                    </div>
+                </div>
+
+                <div class="card-block" style="margin-top:1rem; display:flex; align-items:center; gap:8px; color:var(--text-secondary); font-size:13px;">
+                    <i class="ti ti-calendar"></i> Vigencia: hasta <strong style="margin-left:4px;">15/11/2025</strong>
+                </div>
+            </div>
+
+            <!-- SIN BECA -->
+            <div th:unless="${tieneBeca}">
+                <div class="card-block" style="text-align:center; padding:2.5rem;">
+                    <i class="ti ti-gift-off" style="font-size:48px; color:var(--border-secondary); display:block; margin-bottom:12px;"></i>
+                    <div style="font-weight:600; font-size:16px; color:var(--text-secondary); margin-bottom:8px;"
+                         th:text="${puntaje > 0 ? 'Aún no alcanzas el beneficio' : 'Sin resultados registrados'}">—</div>
+                    <div th:if="${puntaje > 0}">
+                        <div style="font-size:36px; font-weight:700; color:var(--uts-red); margin-bottom:6px;"
+                             th:text="${puntaje + ' pts'}">—</div>
+                        <div style="font-size:13px; color:var(--text-tertiary);">
+                            Necesitas <strong>241 puntos o más</strong> para acceder a los beneficios académicos.
+                        </div>
+                    </div>
+                    <div th:unless="${puntaje > 0}" style="font-size:13px; color:var(--text-tertiary);">
+                        Presenta el examen Saber Pro para conocer tus beneficios.
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Resolución Beneficios · Estudiante</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('resolucion')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Resolución Beneficios Tecnología y Ingeniería')}"></div>
+        <main class="content-area">
+
+            <div class="card-block" style="margin-bottom:1.5rem;">
+                <p class="section-title"><i class="ti ti-file-certificate"></i> Resolución Académica — Facultad de Tecnología e Ingeniería</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1rem;">
+                    <div>
+                        <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">Número</div>
+                        <div style="font-weight:600;">RES-TYI-2025-001</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">Fecha</div>
+                        <div style="font-weight:600;">15/11/2025</div>
+                    </div>
+                    <div style="grid-column:1/-1;">
+                        <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;">Facultad</div>
+                        <div style="font-weight:600;">Facultad de Tecnología e Ingeniería</div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="section-title">Beneficios Contemplados</p>
+            <div class="two-cols">
+                <div class="card-block">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                        <div class="stat-icon si-green"><i class="ti ti-file-certificate"></i></div>
+                        <div style="font-weight:600;">Exoneración Trabajo de Grado</div>
+                    </div>
+                    <div class="alert-item">
+                        <div class="alert-dot ad-green"></div>
+                        <div>Estudiantes con puntaje Saber Pro <strong>superior a 241 puntos</strong> obtienen nota <strong>5.0/5.0</strong> en trabajo de grado.</div>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                        <div class="stat-icon si-blue"><i class="ti ti-school"></i></div>
+                        <div style="font-weight:600;">Beca Derechos de Grado</div>
+                    </div>
+                    <div class="alert-item">
+                        <div class="alert-dot ad-green"></div>
+                        <div>Descuento del <strong>100%</strong> en los derechos de grado para estudiantes habilitados con puntaje superior.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-block" style="margin-top:1rem; display:flex; align-items:center; gap:8px; color:var(--text-secondary); font-size:13px;">
+                <i class="ti ti-calendar"></i>
+                Vigencia de los beneficios: período académico 2025-2, hasta el <strong style="margin-left:4px;">15/11/2026</strong>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Informe Total · Coordinador</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('informe-total')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Informe de Alumnos Total y Único')}"></div>
+        <main class="content-area">
+
+            <!-- Totales globales -->
+            <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon si-blue"><i class="ti ti-users"></i></div>
+                    <div class="stat-label">Total General</div>
+                    <div class="stat-value" th:text="${totalGeneral}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-check"></i></div>
+                    <div class="stat-label">Habilitados</div>
+                    <div class="stat-value" th:text="${habilitados}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-clock"></i></div>
+                    <div class="stat-label">Pendientes</div>
+                    <div class="stat-value" th:text="${pendientes}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-red"><i class="ti ti-x"></i></div>
+                    <div class="stat-label">No Habilitados</div>
+                    <div class="stat-value" th:text="${noHabilitados}">0</div>
+                </div>
+            </div>
+
+            <!-- Resumen por programa -->
+            <p class="section-title">Resumen por Programa</p>
+            <div class="table-card" style="margin-bottom:1.5rem;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Programa</th>
+                            <th>Código</th>
+                            <th>Total</th>
+                            <th>Habilitados</th>
+                            <th>Pendientes</th>
+                            <th>% Habilitación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${porPrograma}">
+                            <td th:text="${p.nombre}">—</td>
+                            <td th:text="${p.codigo}">—</td>
+                            <td th:text="${p.total}">0</td>
+                            <td><span class="badge b-green" th:text="${p.habilitados}">0</span></td>
+                            <td><span class="badge b-gold"  th:text="${p.pendientes}">0</span></td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <div style="flex:1; background:var(--border-tertiary); border-radius:3px; height:8px;">
+                                        <div th:style="'width:' + ${p.pct} + '%; height:100%; background:var(--uts-green); border-radius:3px; max-width:100%;'"></div>
+                                    </div>
+                                    <span style="font-size:12px; font-weight:600;" th:text="${p.pct + '%'}">0%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(porPrograma)}">
+                            <td colspan="6" style="text-align:center; color:var(--text-tertiary);">Sin datos disponibles.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Listado completo -->
+            <p class="section-title">Listado Completo de Alumnos</p>
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Documento</th>
+                            <th>Nombre Completo</th>
+                            <th>Programa</th>
+                            <th>Tipo Examen</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e, i : ${todos}">
+                            <td th:text="${i.count}">1</td>
+                            <td th:text="${e.documento}">—</td>
+                            <td th:text="${e.usuario.nombre + ' ' + e.usuario.apellido}">—</td>
+                            <td th:text="${e.programa != null ? e.programa.nombre : '—'}">—</td>
+                            <td>
+                                <span th:if="${e.tipoExamen != null}"
+                                      th:class="${e.tipoExamen.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'"
+                                      th:text="${e.tipoExamen.name() == 'SABER_PRO'} ? 'Saber Pro' : 'Saber TyT'">—</span>
+                                <span th:unless="${e.tipoExamen != null}" class="badge b-gold">N/A</span>
+                            </td>
+                            <td>
+                                <span th:if="${e.estadoInscripcion.name() == 'HABILITADO'}"    class="badge b-green">Habilitado</span>
+                                <span th:if="${e.estadoInscripcion.name() == 'PENDIENTE'}"     class="badge b-gold">Pendiente</span>
+                                <span th:if="${e.estadoInscripcion.name() == 'NO_HABILITADO'}" class="badge b-red">No habilitado</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(todos)}">
+                            <td colspan="6" style="text-align:center; color:var(--text-tertiary);">Sin estudiantes registrados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

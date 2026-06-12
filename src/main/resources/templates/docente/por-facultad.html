@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Por Facultad · Docente</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('por-facultad')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Alumnos por Facultad')}"></div>
+        <main class="content-area">
+
+            <!-- Selector de programa/facultad -->
+            <div class="card-block" style="margin-bottom:1.5rem;">
+                <p class="section-title">Seleccionar Facultad / Programa</p>
+                <form th:action="@{/docente/por-facultad}" method="get"
+                      style="display:flex; gap:1rem; align-items:flex-end;">
+                    <div style="flex:1;">
+                        <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">Programa</label>
+                        <select class="form-control" name="programaId">
+                            <option value="">Todos los programas</option>
+                            <option th:each="p : ${programas}"
+                                    th:value="${p.id}"
+                                    th:text="${p.nombre + ' (' + p.codigo + ')'}"
+                                    th:selected="${programaId != null and programaId == p.id}">
+                            </option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary" type="submit">
+                        <i class="ti ti-filter"></i> Filtrar
+                    </button>
+                    <a th:href="@{/docente/por-facultad}" class="btn btn-outline">
+                        <i class="ti ti-x"></i> Limpiar
+                    </a>
+                </form>
+            </div>
+
+            <!-- Encabezado resultado -->
+            <div th:if="${programaSeleccionado != null}" class="card-block"
+                 style="margin-bottom:1rem; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+                <div class="stat-icon si-blue" style="width:36px;height:36px;flex-shrink:0;">
+                    <i class="ti ti-building"></i>
+                </div>
+                <div>
+                    <div style="font-weight:600;" th:text="${programaSeleccionado.nombre}">—</div>
+                    <div style="font-size:12px; color:var(--text-secondary);"
+                         th:text="'Código: ' + ${programaSeleccionado.codigo}">—</div>
+                </div>
+                <div style="margin-left:auto;">
+                    <span class="badge b-blue" th:text="${estudiantes.size()} + ' alumno(s)'">0</span>
+                </div>
+            </div>
+
+            <!-- Tabla de estudiantes -->
+            <p class="section-title">Listado de Alumnos</p>
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Documento</th>
+                            <th>Nombre Completo</th>
+                            <th>Programa</th>
+                            <th>Tipo Examen</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e, i : ${estudiantes}">
+                            <td th:text="${i.count}">1</td>
+                            <td th:text="${e.documento}">—</td>
+                            <td>
+                                <div style="font-weight:500;" th:text="${e.usuario.nombre + ' ' + e.usuario.apellido}">—</div>
+                                <div style="font-size:11px; color:var(--text-tertiary);" th:text="${e.usuario.email}">—</div>
+                            </td>
+                            <td th:text="${e.programa != null ? e.programa.nombre : '—'}">—</td>
+                            <td>
+                                <span th:if="${e.tipoExamen != null}"
+                                      th:class="${e.tipoExamen.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'"
+                                      th:text="${e.tipoExamen.name() == 'SABER_PRO'} ? 'Saber Pro' : 'Saber TyT'">—</span>
+                                <span th:unless="${e.tipoExamen != null}" class="badge b-gold">Sin asignar</span>
+                            </td>
+                            <td>
+                                <span th:if="${e.estadoInscripcion.name() == 'HABILITADO'}"    class="badge b-green">Habilitado</span>
+                                <span th:if="${e.estadoInscripcion.name() == 'PENDIENTE'}"     class="badge b-gold">Pendiente</span>
+                                <span th:if="${e.estadoInscripcion.name() == 'NO_HABILITADO'}" class="badge b-red">No habilitado</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(estudiantes)}">
+                            <td colspan="6" style="text-align:center; color:var(--text-tertiary);">
+                                No hay estudiantes en este programa.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

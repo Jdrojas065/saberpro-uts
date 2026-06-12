@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Identificación · Estudiante</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('identificacion')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Identificación')}"></div>
+        <main class="content-area">
+
+            <div class="two-cols">
+                <div class="card-block">
+                    <p class="section-title">Datos Personales</p>
+                    <div style="display:grid; gap:14px;">
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;"><i class="ti ti-user"></i> Nombre completo</div>
+                            <div style="font-weight:600;" th:text="${usuario.nombre + ' ' + usuario.apellido}">—</div>
+                        </div>
+                        <div class="divider" style="margin:0;"></div>
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;"><i class="ti ti-mail"></i> Correo electrónico</div>
+                            <div style="font-weight:600;" th:text="${usuario.email}">—</div>
+                        </div>
+                        <div class="divider" style="margin:0;"></div>
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;"><i class="ti ti-id-badge"></i> Número de documento</div>
+                            <div style="font-weight:600;" th:text="${estudiante != null ? estudiante.documento : '—'}">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-block">
+                    <p class="section-title">Información Académica</p>
+                    <div style="display:grid; gap:14px;">
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;"><i class="ti ti-school"></i> Programa</div>
+                            <div style="font-weight:600;"
+                                 th:text="${estudiante != null and estudiante.programa != null ? estudiante.programa.nombre : '—'}">—</div>
+                        </div>
+                        <div class="divider" style="margin:0;"></div>
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;"><i class="ti ti-file-certificate"></i> Tipo de Examen</div>
+                            <div>
+                                <span th:if="${estudiante != null and estudiante.tipoExamen != null}"
+                                      th:class="${estudiante.tipoExamen.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'"
+                                      th:text="${estudiante.tipoExamen.name() == 'SABER_PRO'} ? 'Saber Pro' : 'Saber TyT'">—</span>
+                                <span th:unless="${estudiante != null and estudiante.tipoExamen != null}"
+                                      class="badge b-gold">Sin asignar</span>
+                            </div>
+                        </div>
+                        <div class="divider" style="margin:0;"></div>
+                        <div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px;"><i class="ti ti-circle-check"></i> Estado de Inscripción</div>
+                            <div>
+                                <span th:if="${estudiante != null and estudiante.estadoInscripcion.name() == 'HABILITADO'}"    class="badge b-green">Habilitado</span>
+                                <span th:if="${estudiante != null and estudiante.estadoInscripcion.name() == 'PENDIENTE'}"     class="badge b-gold">Pendiente</span>
+                                <span th:if="${estudiante != null and estudiante.estadoInscripcion.name() == 'NO_HABILITADO'}" class="badge b-red">No Habilitado</span>
+                                <span th:if="${estudiante == null}" class="badge b-gold">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

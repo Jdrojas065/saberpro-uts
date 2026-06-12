@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Informe de Beneficios · Docente</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('informe-beneficios')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Informe de Beneficios')}"></div>
+        <main class="content-area">
+
+            <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-gift"></i></div>
+                    <div class="stat-label">Total Beneficiarios (Habilitados)</div>
+                    <div class="stat-value" th:text="${totalHab}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-blue"><i class="ti ti-building"></i></div>
+                    <div class="stat-label">Programas con beneficiarios</div>
+                    <div class="stat-value" th:text="${porPrograma.size()}">0</div>
+                </div>
+            </div>
+
+            <p class="section-title">Beneficiarios por Programa</p>
+            <div class="table-card" style="margin-bottom:1.5rem;">
+                <table>
+                    <thead>
+                        <tr><th>Programa</th><th>Código</th><th>Beneficiarios</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${porPrograma}">
+                            <td th:text="${p.nombre}">—</td>
+                            <td th:text="${p.codigo}">—</td>
+                            <td><span class="badge b-green" th:text="${p.count}">0</span></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(porPrograma)}">
+                            <td colspan="3" style="text-align:center; color:var(--text-tertiary);">Sin datos.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="section-title">Alumnos con Beneficio</p>
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Documento</th><th>Nombre</th><th>Programa</th><th>Tipo Examen</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e, i : ${habilitados}">
+                            <td th:text="${i.count}">1</td>
+                            <td th:text="${e.documento}">—</td>
+                            <td th:text="${e.usuario.nombre + ' ' + e.usuario.apellido}">—</td>
+                            <td th:text="${e.programa != null ? e.programa.nombre : '—'}">—</td>
+                            <td>
+                                <span th:if="${e.tipoExamen != null}"
+                                      th:class="${e.tipoExamen.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'"
+                                      th:text="${e.tipoExamen.name() == 'SABER_PRO'} ? 'Saber Pro' : 'Saber TyT'">—</span>
+                                <span th:unless="${e.tipoExamen != null}" class="badge b-gold">N/A</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(habilitados)}">
+                            <td colspan="5" style="text-align:center; color:var(--text-tertiary);">Sin alumnos habilitados.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

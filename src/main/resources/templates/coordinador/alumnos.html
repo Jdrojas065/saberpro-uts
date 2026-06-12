@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Gestión de Alumnos · Coordinador</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('alumnos')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Gestión de Alumnos')}"></div>
+        <main class="content-area">
+
+            <div th:if="${mensaje}" class="alert-box alert-success auto-hide">
+                <i class="ti ti-check"></i><span th:text="${mensaje}"></span>
+            </div>
+            <div th:if="${error}" class="alert-box alert-danger auto-hide">
+                <i class="ti ti-x"></i><span th:text="${error}"></span>
+            </div>
+
+            <!-- Stats rápidos -->
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-check"></i></div>
+                    <div class="stat-label">Habilitados</div>
+                    <div class="stat-value" th:text="${totalHab}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-clock"></i></div>
+                    <div class="stat-label">Pendientes</div>
+                    <div class="stat-value" th:text="${totalPend}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-red"><i class="ti ti-x"></i></div>
+                    <div class="stat-label">No habilitados</div>
+                    <div class="stat-value" th:text="${totalNoHab}">0</div>
+                </div>
+            </div>
+
+            <!-- Formulario nuevo alumno -->
+            <div class="card-block" style="margin-bottom:1.5rem;">
+                <p class="section-title">Nuevo Estudiante</p>
+                <form th:action="@{/coordinador/alumnos/nuevo}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1rem;">
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                <i class="ti ti-id-badge"></i> Número Documento
+                            </label>
+                            <input class="form-control" type="text" name="documento" placeholder="Número documento" required/>
+                        </div>
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                <i class="ti ti-user"></i> Primer Nombre
+                            </label>
+                            <input class="form-control" type="text" name="nombre" placeholder="Nombre" required/>
+                        </div>
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                <i class="ti ti-user"></i> Apellido
+                            </label>
+                            <input class="form-control" type="text" name="apellido" placeholder="Apellido" required/>
+                        </div>
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                <i class="ti ti-mail"></i> Correo Electrónico
+                            </label>
+                            <input class="form-control" type="email" name="email" placeholder="correo@uts.edu.co" required/>
+                        </div>
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                <i class="ti ti-school"></i> Programa
+                            </label>
+                            <select class="form-control" name="programaId" required>
+                                <option value="">Seleccionar programa</option>
+                                <option th:each="p : ${programas}" th:value="${p.id}" th:text="${p.nombre}">Programa</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                <i class="ti ti-file-certificate"></i> Tipo Examen
+                            </label>
+                            <select class="form-control" name="tipoExamen">
+                                <option value="">Sin asignar</option>
+                                <option value="SABER_PRO">Saber Pro</option>
+                                <option value="SABER_TYT">Saber TyT</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                <i class="ti ti-lock"></i> Contraseña
+                            </label>
+                            <input class="form-control" type="password" name="password" placeholder="Será su número de documento" required/>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" type="submit">
+                        <i class="ti ti-user-plus"></i> Crear Estudiante
+                    </button>
+                </form>
+            </div>
+
+            <!-- Buscador -->
+            <div class="card-block" style="margin-bottom:1rem; padding:12px 16px;">
+                <form th:action="@{/coordinador/alumnos}" method="get"
+                      style="display:flex; gap:10px; align-items:center;">
+                    <input type="text" name="filtro" th:value="${filtro}"
+                           placeholder="Buscar por nombre, apellido o documento..."
+                           style="flex:1; padding:9px 12px; border:0.5px solid var(--border-secondary);
+                                  border-radius:var(--radius-md); font-size:13px; outline:none; font-family:inherit;"/>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="ti ti-search"></i> Buscar
+                    </button>
+                    <a th:href="@{/coordinador/alumnos}" class="btn btn-outline">
+                        <i class="ti ti-x"></i> Limpiar
+                    </a>
+                </form>
+            </div>
+
+            <!-- Tabla listado -->
+            <p class="section-title">Listado de Estudiantes</p>
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Documento</th>
+                            <th>Nombre Completo</th>
+                            <th>Programa</th>
+                            <th>Tipo Examen</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e : ${estudiantes}">
+                            <td th:text="${e.documento}">—</td>
+                            <td>
+                                <div style="font-weight:500;" th:text="${e.usuario.nombre + ' ' + e.usuario.apellido}">—</div>
+                                <div style="font-size:11px; color:var(--text-tertiary);" th:text="${e.usuario.email}">—</div>
+                            </td>
+                            <td th:text="${e.programa != null ? e.programa.nombre : '—'}">—</td>
+                            <td>
+                                <span th:if="${e.tipoExamen != null}"
+                                      th:class="${e.tipoExamen.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'"
+                                      th:text="${e.tipoExamen.name() == 'SABER_PRO'} ? 'Saber Pro' : 'Saber TyT'">—</span>
+                                <span th:unless="${e.tipoExamen != null}" class="badge b-gold">Sin asignar</span>
+                            </td>
+                            <td>
+                                <span th:if="${e.estadoInscripcion.name() == 'HABILITADO'}"    class="badge b-green">Activo</span>
+                                <span th:if="${e.estadoInscripcion.name() == 'PENDIENTE'}"     class="badge b-gold">Pendiente</span>
+                                <span th:if="${e.estadoInscripcion.name() == 'NO_HABILITADO'}" class="badge b-red">No hab.</span>
+                            </td>
+							<td>
+							    <div style="display:flex; gap:4px; flex-wrap:wrap;">
+
+							        <!-- Editar -->
+							        <a th:href="@{'/coordinador/alumnos/' + ${e.id} + '/editar'}"
+							           class="btn btn-outline"
+							           style="padding:4px 8px; font-size:11px; color:var(--uts-blue);">
+							            <i class="ti ti-edit"></i> Editar
+							        </a>
+
+							        <!-- Aprobar Saber Pro -->
+							        <form th:action="@{'/coordinador/alumnos/' + ${e.id} + '/aprobar'}"
+							              method="post" style="display:inline;"
+							              onsubmit="return confirm('¿Aprobar para Saber Pro?')">
+							            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+							            <button class="btn btn-outline" type="submit"
+							                    style="padding:4px 8px; font-size:11px; color:var(--uts-green);">
+							                <i class="ti ti-check"></i> Aprobar
+							            </button>
+							        </form>
+
+							        <!-- Activar/Desactivar -->
+							        <form th:action="@{'/coordinador/alumnos/' + ${e.id} + '/toggle'}"
+							              method="post" style="display:inline;">
+							            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+							            <button class="btn btn-outline" type="submit"
+							                    style="padding:4px 8px; font-size:11px;"
+							                    th:text="${e.usuario.activo} ? 'Desactivar' : 'Activar'">—</button>
+							        </form>
+									
+									<!-- Registrar Puntajes -->
+									<a th:href="@{'/coordinador/alumnos/' + ${e.id} + '/puntajes'}"
+									   class="btn btn-outline"
+									   style="padding:4px 8px; font-size:11px; color:var(--uts-blue);">
+									    <i class="ti ti-chart-bar"></i> Puntajes
+									</a>
+									
+							    </div>
+							</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(estudiantes)}">
+                            <td colspan="6" style="text-align:center; color:var(--text-tertiary);">
+                                No hay estudiantes registrados.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

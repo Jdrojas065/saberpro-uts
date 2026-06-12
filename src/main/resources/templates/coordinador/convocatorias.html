@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Convocatorias · Coordinador</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('convocatorias')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Convocatorias')}"></div>
+        <main class="content-area">
+
+            <div th:if="${mensaje}" class="alert-box alert-success auto-hide">
+                <i class="ti ti-check"></i><span th:text="${mensaje}"></span>
+            </div>
+
+            <div class="two-cols" style="align-items:start;">
+
+                <!-- Lista -->
+                <div>
+                    <p class="section-title">Convocatorias registradas</p>
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr><th>Nombre</th><th>Tipo</th><th>Fecha</th><th>Cierre</th><th>Estado</th><th>Acción</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${convocatorias}">
+                                    <td th:text="${c.nombre}">—</td>
+                                    <td>
+                                        <span th:text="${c.tipo.name()}"
+                                              th:class="${c.tipo.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'">
+                                        </span>
+                                    </td>
+                                    <td th:text="${#temporals.format(c.fecha,'dd/MM/yyyy')}">—</td>
+                                    <td th:text="${c.fechaCierre != null ? #temporals.format(c.fechaCierre,'dd/MM/yyyy') : '—'}">—</td>
+                                    <td>
+                                        <span th:if="${c.activa}"    class="badge b-green">Activa</span>
+                                        <span th:unless="${c.activa}" class="badge b-red">Cerrada</span>
+                                    </td>
+                                    <td>
+                                        <form th:action="@{/coordinador/convocatorias/{id}/toggle(id=${c.id})}"
+                                              method="post" style="display:inline;">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                            <button type="submit" class="btn btn-outline"
+                                                    style="padding:4px 10px; font-size:11px;"
+                                                    th:text="${c.activa} ? 'Cerrar' : 'Activar'">
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(convocatorias)}">
+                                    <td colspan="6" style="text-align:center; color:var(--text-tertiary);">
+                                        Sin convocatorias registradas
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Formulario nueva -->
+                <div>
+                    <p class="section-title">Nueva convocatoria</p>
+                    <div class="form-card">
+                        <form th:action="@{/coordinador/convocatorias/nueva}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" name="nombre"
+                                       placeholder="Ej. Saber Pro 2025-2" required/>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de examen</label>
+                                <select name="tipo" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="SABER_PRO">Saber Pro</option>
+                                    <option value="SABER_TYT">Saber TyT</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha del examen</label>
+                                <input type="date" name="fecha" required/>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de cierre de inscripciones</label>
+                                <input type="date" name="fechaCierre"/>
+                            </div>
+                            <button type="submit" class="btn btn-secondary" style="width:100%;">
+                                <i class="ti ti-plus"></i> Registrar convocatoria
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

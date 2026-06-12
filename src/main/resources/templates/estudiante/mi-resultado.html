@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Mi Último Resultado · Estudiante</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('mi-resultado')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Mi Último Resultado Saber Pro')}"></div>
+        <main class="content-area">
+
+            <div th:if="${mensaje}" class="alert-box alert-success" style="margin-bottom:1rem;">
+                <i class="ti ti-check"></i><span th:text="${mensaje}"></span>
+            </div>
+            <div th:if="${error}" class="alert-box alert-danger" style="margin-bottom:1rem;">
+                <i class="ti ti-x"></i><span th:text="${error}"></span>
+            </div>
+
+            <!-- Cargue de pago -->
+            <div class="card-block" style="margin-bottom:1.5rem;">
+                <p class="section-title"><i class="ti ti-upload"></i> Cargue Pago Saber Pro</p>
+                <form th:action="@{/estudiante/mi-resultado/cargar}" method="post"
+                      enctype="multipart/form-data"
+                      style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="file" name="archivo" accept=".pdf,.jpg,.png"
+                           style="flex:1; padding:8px; border:1px dashed var(--border-secondary); border-radius:var(--radius-md); font-size:13px; font-family:inherit;"/>
+                    <button class="btn btn-secondary" type="submit">
+                        <i class="ti ti-upload"></i> Importar
+                    </button>
+                </form>
+            </div>
+
+            <!-- Con resultado -->
+            <div th:if="${resultado != null}">
+
+                <!-- Puntaje global -->
+                <div class="card-block" style="margin-bottom:1.5rem; background:var(--uts-green); text-align:center; padding:2rem;">
+                    <i class="ti ti-trophy" style="font-size:40px; color:rgba(255,255,255,.9); display:block; margin-bottom:10px;"></i>
+                    <div style="font-size:13px; color:rgba(255,255,255,.8); margin-bottom:6px;">Puntaje Global</div>
+                    <div style="font-size:56px; font-weight:700; color:white; line-height:1; margin-bottom:8px;"
+                         th:text="${resultado.puntaje}">—</div>
+                    <span style="display:inline-block; background:rgba(0,0,0,.20); color:white; border-radius:20px; padding:4px 20px; font-size:13px; font-style:italic; font-weight:500; margin-bottom:12px;"
+                          th:text="${nivel}">—</span>
+                    <div style="font-size:12px; color:rgba(255,255,255,.75); display:flex; align-items:center; justify-content:center; gap:6px;"
+                         th:if="${resultado.fecha != null}">
+                        <i class="ti ti-calendar"></i>
+                        Fecha del examen: <strong th:text="${#temporals.format(resultado.fecha,'dd/MM/yyyy')}">—</strong>
+                    </div>
+                </div>
+
+                <!-- Por competencia -->
+                <p class="section-title">Puntaje por Competencia</p>
+                <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+                    <div class="stat-card" th:if="${resultado.puntajeComunicacionEscrita != null}">
+                        <div class="stat-icon si-red"><i class="ti ti-pencil"></i></div>
+                        <div class="stat-label">Comunicación Escrita</div>
+                        <div class="stat-value" th:text="${resultado.puntajeComunicacionEscrita}">—</div>
+                    </div>
+                    <div class="stat-card" th:if="${resultado.puntajeRazonamientoCuantitativo != null}">
+                        <div class="stat-icon si-blue"><i class="ti ti-calculator"></i></div>
+                        <div class="stat-label">Razonamiento Cuantitativo</div>
+                        <div class="stat-value" th:text="${resultado.puntajeRazonamientoCuantitativo}">—</div>
+                    </div>
+                    <div class="stat-card" th:if="${resultado.puntajeLecturaCritica != null}">
+                        <div class="stat-icon si-gold"><i class="ti ti-book"></i></div>
+                        <div class="stat-label">Lectura Crítica</div>
+                        <div class="stat-value" th:text="${resultado.puntajeLecturaCritica}">—</div>
+                    </div>
+                </div>
+                <div class="stats-grid" style="grid-template-columns:repeat(2,1fr); margin-top:0;">
+                    <div class="stat-card" th:if="${resultado.puntajeCompetenciasCiudadanas != null}">
+                        <div class="stat-icon si-green"><i class="ti ti-users"></i></div>
+                        <div class="stat-label">Competencias Ciudadanas</div>
+                        <div class="stat-value" th:text="${resultado.puntajeCompetenciasCiudadanas}">—</div>
+                    </div>
+                    <div class="stat-card" th:if="${resultado.puntajeIngles != null}">
+                        <div class="stat-icon si-blue"><i class="ti ti-language"></i></div>
+                        <div class="stat-label">Inglés
+                            <span class="badge b-blue" style="margin-left:6px;"
+                                  th:text="${nivelIngles != null ? nivelIngles : ''}"></span>
+                        </div>
+                        <div class="stat-value" th:text="${resultado.puntajeIngles}">—</div>
+                    </div>
+                </div>
+				<!-- Agregar en la sección de competencias específicas -->
+				<div class="stat-card" th:if="${resultado.formulacionProyectos != null}">
+				    <div class="stat-icon si-red"><i class="ti ti-briefcase"></i></div>
+				    <div class="stat-label">Formulacion de Proyectos</div>
+				    <div class="stat-value" th:text="${resultado.formulacionProyectos}">—</div>
+				</div>
+				<div class="stat-card" th:if="${resultado.pensamientoCientifico != null}">
+				    <div class="stat-icon si-blue"><i class="ti ti-math"></i></div>
+				    <div class="stat-label">Pensamiento Cientifico</div>
+				    <div class="stat-value" th:text="${resultado.pensamientoCientifico}">—</div>
+				</div>
+				<div class="stat-card" th:if="${resultado.disenoSoftware != null}">
+				    <div class="stat-icon si-green"><i class="ti ti-code"></i></div>
+				    <div class="stat-label">Diseno de Software</div>
+				    <div class="stat-value" th:text="${resultado.disenoSoftware}">—</div>
+				</div>
+            </div>
+
+            <!-- Sin resultado -->
+            <div th:unless="${resultado != null}" class="card-block" style="text-align:center; padding:3rem;">
+                <i class="ti ti-chart-bar-off" style="font-size:48px; color:var(--border-secondary); display:block; margin-bottom:12px;"></i>
+                <div style="font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Sin resultados registrados</div>
+                <div style="font-size:12px; color:var(--text-tertiary);">Aún no tienes resultados en el sistema.</div>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

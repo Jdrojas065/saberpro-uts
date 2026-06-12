@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Estudiantes · Coordinador</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('estudiantes')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Gestión de Estudiantes')}"></div>
+        <main class="content-area">
+
+            <div th:if="${mensaje}" class="alert-box alert-success auto-hide">
+                <i class="ti ti-check"></i><span th:text="${mensaje}"></span>
+            </div>
+
+            <!-- Stats rápidos -->
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-check"></i></div>
+                    <div class="stat-label">Habilitados</div>
+                    <div class="stat-value" th:text="${totalHab}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-clock"></i></div>
+                    <div class="stat-label">Pendientes</div>
+                    <div class="stat-value" th:text="${totalPend}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-red"><i class="ti ti-x"></i></div>
+                    <div class="stat-label">No habilitados</div>
+                    <div class="stat-value" th:text="${totalNoHab}">0</div>
+                </div>
+            </div>
+
+            <!-- Buscador -->
+            <div class="card-block" style="margin-bottom:16px; padding:12px 16px;">
+                <form th:action="@{/coordinador/estudiantes}" method="get"
+                      style="display:flex; gap:10px; align-items:center;">
+                    <input type="text" name="filtro" th:value="${filtro}"
+                           placeholder="Buscar por nombre, apellido o documento..."
+                           style="flex:1; padding:9px 12px; border:0.5px solid var(--border-secondary);
+                                  border-radius:var(--radius-md); font-size:13px; outline:none;
+                                  font-family:inherit;"/>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="ti ti-search"></i> Buscar
+                    </button>
+                    <a th:href="@{/coordinador/estudiantes}" class="btn btn-outline">
+                        <i class="ti ti-x"></i> Limpiar
+                    </a>
+                </form>
+            </div>
+
+            <!-- Tabla -->
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Estudiante</th>
+                            <th>Documento</th>
+                            <th>Programa</th>
+                            <th>Tipo examen</th>
+                            <th>Estado</th>
+                            <th>Cambiar estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e, i : ${estudiantes}">
+                            <td th:text="${i.count}">1</td>
+                            <td>
+                                <div style="font-weight:500;"
+                                     th:text="${e.usuario.nombre + ' ' + e.usuario.apellido}">—</div>
+                                <div style="font-size:11px; color:var(--text-tertiary);"
+                                     th:text="${e.usuario.email}">—</div>
+                            </td>
+                            <td th:text="${e.documento}">—</td>
+                            <td th:text="${e.programa != null ? e.programa.nombre : '—'}">—</td>
+                            <td>
+                                <span th:if="${e.tipoExamen != null}"
+                                      th:text="${e.tipoExamen.name()}"
+                                      th:class="${e.tipoExamen.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'">
+                                </span>
+                                <span th:unless="${e.tipoExamen != null}" class="badge b-gold">N/A</span>
+                            </td>
+                            <td>
+                                <span th:if="${e.estadoInscripcion.name() == 'HABILITADO'}"    class="badge b-green">Habilitado</span>
+                                <span th:if="${e.estadoInscripcion.name() == 'PENDIENTE'}"     class="badge b-gold">Pendiente</span>
+                                <span th:if="${e.estadoInscripcion.name() == 'NO_HABILITADO'}" class="badge b-red">No habilitado</span>
+                            </td>
+                            <td>
+                                <form th:action="@{/coordinador/estudiantes/{id}/estado(id=${e.id})}"
+                                      method="post" style="display:flex; gap:4px;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <select name="estado"
+                                            style="padding:4px 8px; border:0.5px solid var(--border-secondary);
+                                                   border-radius:var(--radius-sm); font-size:12px;
+                                                   font-family:inherit; outline:none;">
+                                        <option value="HABILITADO"    th:selected="${e.estadoInscripcion.name() == 'HABILITADO'}">Habilitado</option>
+                                        <option value="PENDIENTE"     th:selected="${e.estadoInscripcion.name() == 'PENDIENTE'}">Pendiente</option>
+                                        <option value="NO_HABILITADO" th:selected="${e.estadoInscripcion.name() == 'NO_HABILITADO'}">No habilitado</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-outline"
+                                            style="padding:4px 8px; font-size:11px;">
+                                        <i class="ti ti-check"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(estudiantes)}">
+                            <td colspan="7" style="text-align:center; color:var(--text-tertiary);">
+                                Sin estudiantes encontrados
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

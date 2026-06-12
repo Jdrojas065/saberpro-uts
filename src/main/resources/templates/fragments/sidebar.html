@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<nav th:fragment="sidebar(active)" class="sidebar" aria-label="Navegación principal">
+
+    <div class="sidebar-brand">
+        <div class="sidebar-logo">UTS</div>
+        <span>Saber Pro</span>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="user-avatar"
+             th:text="${#strings.toUpperCase(#strings.substring(usuario.nombre,0,1))}">U</div>
+        <div class="u-name" th:text="${usuario.nombre + ' ' + usuario.apellido}">Usuario</div>
+        <div class="u-role" th:text="${usuario.rol.nombre}">Rol</div>
+    </div>
+
+	<!-- ── ADMIN ── -->
+	<div sec:authorize="hasRole('ADMIN')" class="sidebar-nav">
+	    <div class="nav-section-label">Gestión</div>
+	    <a th:href="@{/admin/docentes}"
+	       th:classappend="${active=='docentes'}?'active'" class="nav-item">
+	        <i class="ti ti-chalkboard"></i> Docentes
+	    </a>
+	    <a th:href="@{/admin/coordinadores}"
+	       th:classappend="${active=='coordinadores'}?'active'" class="nav-item">
+	        <i class="ti ti-user-check"></i> Coordinación
+	    </a>
+	    <a th:href="@{/admin/facultades}"
+	       th:classappend="${active=='facultades'}?'active'" class="nav-item">
+	        <i class="ti ti-building"></i> Facultades
+	    </a>
+	    <div class="nav-section-label">Resoluciones</div>
+	    <a th:href="@{/admin/beneficios}"
+	       th:classappend="${active=='beneficios'}?'active'" class="nav-item">
+	        <i class="ti ti-file-text"></i> Beneficios TyI
+	    </a>
+	</div>
+
+	<!-- ── COORDINADOR ── -->
+	    <div sec:authorize="hasRole('COORDINADOR')" class="sidebar-nav">
+	        <a th:href="@{/coordinador/dashboard}"
+	           th:classappend="${active=='dashboard'}?'active'" class="nav-item">
+	            <i class="ti ti-layout-dashboard"></i> Dashboard
+	        </a>
+	        <div class="nav-section-label">Gestión de Alumnos</div>
+	        <a th:href="@{/coordinador/alumnos}"
+	           th:classappend="${active=='alumnos'}?'active'" class="nav-item">
+	            <i class="ti ti-users"></i> CRUD Alumnos
+	        </a>
+	        <a th:href="@{/coordinador/informe-total}"
+	           th:classappend="${active=='informe-total'}?'active'" class="nav-item">
+	            <i class="ti ti-list"></i> Alumnos Total
+	        </a>
+	        <a th:href="@{/coordinador/informe-unico}"
+	           th:classappend="${active=='informe-unico'}?'active'" class="nav-item">
+	            <i class="ti ti-user-search"></i> Alumno Único
+	        </a>
+	        <div class="nav-section-label">Informes</div>
+	        <a th:href="@{/coordinador/informe-beneficios}"
+	           th:classappend="${active=='informe-beneficios'}?'active'" class="nav-item">
+	            <i class="ti ti-gift"></i> Informe de Beneficios
+	        </a>
+	        <div class="nav-section-label">Resoluciones</div>
+	        <a th:href="@{/coordinador/beneficios}"
+	           th:classappend="${active=='beneficios'}?'active'" class="nav-item">
+	            <i class="ti ti-file-text"></i> Beneficios TyI
+	        </a>
+	    </div>
+
+	<!-- ── DOCENTE ── -->
+	<div sec:authorize="hasRole('DOCENTE')" class="sidebar-nav">
+	    <a th:href="@{/docente/dashboard}"
+	       th:classappend="${active=='dashboard'}?'active'" class="nav-item">
+	        <i class="ti ti-layout-dashboard"></i> Dashboard
+	    </a>
+	    <div class="nav-section-label">Consultas</div>
+	    <a th:href="@{/docente/por-facultad}"
+	       th:classappend="${active=='por-facultad'}?'active'" class="nav-item">
+	        <i class="ti ti-building"></i> Por Facultad
+	    </a>
+	    <a th:href="@{/docente/por-cedula}"
+	       th:classappend="${active=='por-cedula'}?'active'" class="nav-item">
+	        <i class="ti ti-id-badge"></i> Por Cédula
+	    </a>
+	    <div class="nav-section-label">Informes</div>
+	    <a th:href="@{/docente/informe-total}"
+	       th:classappend="${active=='informe-total'}?'active'" class="nav-item">
+	        <i class="ti ti-report"></i> Informe Total y Único
+	    </a>
+	    <a th:href="@{/docente/informe-beneficios}"
+	       th:classappend="${active=='informe-beneficios'}?'active'" class="nav-item">
+	        <i class="ti ti-gift"></i> Informe de Beneficios
+	    </a>
+	    <div class="nav-section-label">Resoluciones</div>
+	    <a th:href="@{/docente/beneficios}"
+	       th:classappend="${active=='beneficios'}?'active'" class="nav-item">
+	        <i class="ti ti-file-text"></i> Beneficios TyI
+	    </a>
+	</div>
+
+	<!-- ── ESTUDIANTE ── -->
+	    <div sec:authorize="hasRole('ESTUDIANTE')" class="sidebar-nav">
+	        <a th:href="@{/estudiante/dashboard}"
+	           th:classappend="${active=='dashboard'}?'active'" class="nav-item">
+	            <i class="ti ti-layout-dashboard"></i> Inicio
+	        </a>
+	        <div class="nav-section-label">Mi Información</div>
+	        <a th:href="@{/estudiante/identificacion}"
+	           th:classappend="${active=='identificacion'}?'active'" class="nav-item">
+	            <i class="ti ti-id-badge"></i> Identificación
+	        </a>
+	        <div class="nav-section-label">Resultados</div>
+	        <a th:href="@{/estudiante/mi-resultado}"
+	           th:classappend="${active=='mi-resultado'}?'active'" class="nav-item">
+	            <i class="ti ti-star"></i> Mi Último Resultado
+	        </a>
+	        <a th:href="@{/estudiante/mis-resultados}"
+	           th:classappend="${active=='mis-resultados'}?'active'" class="nav-item">
+	            <i class="ti ti-chart-line"></i> Todos mis Resultados
+	        </a>
+	        <div class="nav-section-label">Beneficios</div>
+	        <a th:href="@{/estudiante/beneficios}"
+	           th:classappend="${active=='beneficios'}?'active'" class="nav-item">
+	            <i class="ti ti-gift"></i> Beneficios Obtenidos
+	        </a>
+	        <a th:href="@{/estudiante/resolucion}"
+	           th:classappend="${active=='resolucion'}?'active'" class="nav-item">
+	            <i class="ti ti-file-text"></i> Resolución Beneficios TyI
+	        </a>
+	    </div>
+
+    <div class="sidebar-footer">
+        <form th:action="@{/logout}" method="post" style="margin:0;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-logout">
+                <i class="ti ti-logout"></i> Cerrar sesión
+            </button>
+        </form>
+    </div>
+
+</nav>
+</body>
+</html>

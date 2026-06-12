@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard Administrador · Saber Pro UTS</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div style="display:flex; min-height:100vh;">
+    <div th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Dashboard')}"></div>
+
+        <main class="content-area">
+
+            <!-- Stats 4 columnas -->
+            <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-users"></i></div>
+                    <div class="stat-label">Usuarios registrados</div>
+                    <div class="stat-value" th:text="${totalUsuarios}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-red"><i class="ti ti-school"></i></div>
+                    <div class="stat-label">Programas activos</div>
+                    <div class="stat-value" th:text="${totalProgramas}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-calendar-event"></i></div>
+                    <div class="stat-label">Convocatorias</div>
+                    <div class="stat-value" th:text="${totalConvocatorias}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-blue"><i class="ti ti-chart-bar"></i></div>
+                    <div class="stat-label">Tasa de aprobación</div>
+                    <div class="stat-value" th:text="${tasaAprobacion + '%'}">0%</div>
+                </div>
+            </div>
+
+            <!-- Dos columnas iguales -->
+            <div class="two-cols">
+                <div>
+                    <p class="section-title">Usuarios por rol</p>
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr><th>Rol</th><th>Total</th><th>Estado</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${usuariosPorRol}">
+                                    <td th:text="${item.rol}">—</td>
+                                    <td th:text="${item.total}">0</td>
+                                    <td><span class="badge b-green">Activos</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="section-title">Actividad reciente</p>
+                    <div class="card-block">
+                        <div class="alert-item" th:each="act : ${actividadReciente}">
+                            <div class="alert-dot ad-green"></div>
+                            <div th:text="${act}">—</div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(actividadReciente)}" class="alert-item">
+                            <div class="alert-dot ad-gold"></div>
+                            <div>Sin actividad reciente.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+	<div class="nav-section-label">Cuenta</div>
+	<a th:href="@{/admin/perfil}"
+	   th:classappend="${active=='perfil'}?'active'" class="nav-item">
+	    <i class="ti ti-user-edit"></i> Mi Perfil
+	</a>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

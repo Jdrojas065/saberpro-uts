@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Todos mis Resultados · Estudiante</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('mis-resultados')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Todos mis Resultados Saber Pro')}"></div>
+        <main class="content-area">
+
+            <div th:if="${not #lists.isEmpty(resultados)}">
+                <div th:each="res : ${resultados}" class="card-block" style="margin-bottom:1rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <div style="font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px;">
+                            <i class="ti ti-calendar" style="color:var(--uts-red);"></i>
+                            Examen del
+                            <strong th:text="${#temporals.format(res.fecha,'dd/MM/yyyy')}">—</strong>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:24px; font-weight:700; color:var(--uts-red);"
+                                 th:text="${res.puntaje + ' pts'}">—</div>
+                            <span class="badge b-green"
+                                  th:text="${res.puntaje >= 241 ? 'Superior' : (res.puntaje >= 201 ? 'Alto' : (res.puntaje >= 161 ? 'Medio' : 'Bajo'))}">—</span>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:12px;">
+                        <div th:if="${res.puntajeIngles != null}">
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px; display:flex; align-items:center; gap:4px;">
+                                <i class="ti ti-language"></i> Inglés
+                            </div>
+                            <span style="font-size:18px; font-weight:700; color:var(--uts-green);"
+                                  th:text="${res.puntajeIngles}">—</span>
+                            <span style="font-size:11px; color:var(--text-secondary); margin-left:6px;"
+                                  th:text="${res.puntajeIngles >= 90 ? 'C1' : (res.puntajeIngles >= 70 ? 'B2' : (res.puntajeIngles >= 50 ? 'B1' : 'A2'))}">—</span>
+                        </div>
+                        <div th:if="${res.puntajeLecturaCritica != null}">
+                            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:4px; display:flex; align-items:center; gap:4px;">
+                                <i class="ti ti-book"></i> Lectura Crítica
+                            </div>
+                            <span style="font-size:18px; font-weight:700;" th:text="${res.puntajeLecturaCritica}">—</span>
+                        </div>
+						
+						<!-- Agregar en la sección de competencias específicas -->
+						<div class="stat-card" th:if="${resultado.formulacionProyectos != null}">
+						    <div class="stat-icon si-red"><i class="ti ti-briefcase"></i></div>
+						    <div class="stat-label">Formulacion de Proyectos</div>
+						    <div class="stat-value" th:text="${resultado.formulacionProyectos}">—</div>
+						</div>
+						<div class="stat-card" th:if="${resultado.pensamientoCientifico != null}">
+						    <div class="stat-icon si-blue"><i class="ti ti-math"></i></div>
+						    <div class="stat-label">Pensamiento Cientifico</div>
+						    <div class="stat-value" th:text="${resultado.pensamientoCientifico}">—</div>
+						</div>
+						<div class="stat-card" th:if="${resultado.disenoSoftware != null}">
+						    <div class="stat-icon si-green"><i class="ti ti-code"></i></div>
+						    <div class="stat-label">Diseno de Software</div>
+						    <div class="stat-value" th:text="${resultado.disenoSoftware}">—</div>
+						</div>
+                    </div>
+                    <!-- Botón ver detalle completo -->
+                    <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-tertiary);">
+                        <a th:href="@{'/estudiante/resultado/' + ${res.id}}"
+                           class="btn btn-secondary" style="font-size:12px; padding:6px 14px;">
+                            <i class="ti ti-eye"></i> Ver Resultado Detallado
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(resultados)}" class="card-block" style="text-align:center; padding:3rem;">
+                <i class="ti ti-chart-bar-off" style="font-size:48px; color:var(--border-secondary); display:block; margin-bottom:12px;"></i>
+                <div style="font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Sin resultados</div>
+                <div style="font-size:12px; color:var(--text-tertiary);">Aún no tienes resultados registrados.</div>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

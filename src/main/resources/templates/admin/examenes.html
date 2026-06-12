@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Exámenes · Saber Pro UTS</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div style="display:flex; min-height:100vh;">
+    <div th:replace="~{fragments/sidebar :: sidebar('examenes')}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Exámenes y Convocatorias')}"></div>
+
+        <main class="content-area">
+
+            <!-- Stats rápidos -->
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:1.25rem;">
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-file-certificate"></i></div>
+                    <div class="stat-label">Convocatorias activas</div>
+                    <div class="stat-value" th:text="${convocatorias.size()}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-blue"><i class="ti ti-checklist"></i></div>
+                    <div class="stat-label">Tipo Saber Pro</div>
+                    <div class="stat-value"
+                         th:text="${#lists.size(convocatorias.?[tipo.name() == 'SABER_PRO'])}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-checklist"></i></div>
+                    <div class="stat-label">Tipo Saber TyT</div>
+                    <div class="stat-value"
+                         th:text="${#lists.size(convocatorias.?[tipo.name() == 'SABER_TYT'])}">0</div>
+                </div>
+            </div>
+
+            <div class="two-cols" style="align-items:start;">
+
+                <!-- Tabla convocatorias -->
+                <div>
+                    <p class="section-title">Convocatorias registradas</p>
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr><th>Nombre</th><th>Tipo</th><th>Fecha</th><th>Cierre</th><th>Estado</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${convocatorias}">
+                                    <td th:text="${c.nombre}">—</td>
+                                    <td>
+                                        <span th:text="${c.tipo.name()}"
+                                              th:class="${c.tipo.name() == 'SABER_PRO'} ? 'badge b-green' : 'badge b-blue'">
+                                        </span>
+                                    </td>
+                                    <td th:text="${#temporals.format(c.fecha, 'dd/MM/yyyy')}">—</td>
+                                    <td th:text="${c.fechaCierre != null ? #temporals.format(c.fechaCierre,'dd/MM/yyyy') : '—'}">—</td>
+                                    <td>
+                                        <span th:if="${c.activa}"    class="badge b-green">Activa</span>
+                                        <span th:unless="${c.activa}" class="badge b-red">Cerrada</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(convocatorias)}">
+                                    <td colspan="5" style="text-align:center; color:var(--text-tertiary);">
+                                        Sin convocatorias registradas
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Info tipos de examen -->
+                <div>
+                    <p class="section-title">Tipos de examen</p>
+                    <div class="card-block" style="margin-bottom:12px;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                            <div class="stat-icon si-green" style="flex-shrink:0;">
+                                <i class="ti ti-award"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:600; font-size:13px;">Saber Pro</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">
+                                    Para estudiantes de últimos semestres de pregrado.
+                                    Evalúa competencias genéricas y específicas.
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="stat-icon si-blue" style="flex-shrink:0;">
+                                <i class="ti ti-award"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:600; font-size:13px;">Saber TyT</div>
+                                <div style="font-size:12px; color:var(--text-secondary);">
+                                    Para estudiantes de programas tecnológicos.
+                                    Evalúa competencias de formación técnica.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="section-title">Competencias genéricas evaluadas</p>
+                    <div class="card-block">
+                        <div class="alert-item">
+                            <div class="alert-dot ad-green"></div>
+                            <div>Lectura Crítica</div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-dot ad-green"></div>
+                            <div>Razonamiento Cuantitativo</div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-dot ad-green"></div>
+                            <div>Competencias Ciudadanas</div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-dot ad-green"></div>
+                            <div>Comunicación Escrita</div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-dot ad-gold"></div>
+                            <div>Inglés (según programa)</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

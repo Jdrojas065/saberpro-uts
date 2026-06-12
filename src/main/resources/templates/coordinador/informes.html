@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Informes · Coordinador</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('informes')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Informes')}"></div>
+        <main class="content-area">
+
+            <div class="two-cols" style="align-items:start;">
+
+                <!-- Filtros de informe -->
+                <div>
+                    <p class="section-title">Generar informe</p>
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Programa académico</label>
+                            <select name="programa">
+                                <option value="">Todos los programas</option>
+                                <option th:each="p : ${programas}"
+                                        th:value="${p.id}"
+                                        th:text="${p.nombre}">Programa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Convocatoria</label>
+                            <select name="convocatoria">
+                                <option value="">Todas las convocatorias</option>
+                                <option th:each="c : ${convocatorias}"
+                                        th:value="${c.id}"
+                                        th:text="${c.nombre}">Convocatoria</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado de inscripción</label>
+                            <select name="estado">
+                                <option value="">Todos los estados</option>
+                                <option value="HABILITADO">Habilitado</option>
+                                <option value="PENDIENTE">Pendiente</option>
+                                <option value="NO_HABILITADO">No habilitado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de examen</label>
+                            <select name="tipoExamen">
+                                <option value="">Todos</option>
+                                <option value="SABER_PRO">Saber Pro</option>
+                                <option value="SABER_TYT">Saber TyT</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-secondary" style="width:100%;">
+                            <i class="ti ti-file-download"></i> Generar informe
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Informes disponibles -->
+                <div>
+                    <p class="section-title">Informes disponibles</p>
+                    <div class="card-block">
+                        <div class="alert-item" style="align-items:center;">
+                            <div class="stat-icon si-green" style="width:32px;height:32px;flex-shrink:0;">
+                                <i class="ti ti-users"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-weight:500; font-size:13px;">Reporte de estudiantes habilitados</div>
+                                <div style="font-size:12px; color:var(--text-tertiary);">Lista completa de estudiantes con estado HABILITADO</div>
+                            </div>
+                            <a th:href="@{/coordinador/estudiantes}" class="btn btn-outline" style="padding:5px 10px; font-size:12px;">
+                                <i class="ti ti-eye"></i> Ver
+                            </a>
+                        </div>
+                        <div class="alert-item" style="align-items:center;">
+                            <div class="stat-icon si-gold" style="width:32px;height:32px;flex-shrink:0;">
+                                <i class="ti ti-clock"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-weight:500; font-size:13px;">Reporte de pendientes</div>
+                                <div style="font-size:12px; color:var(--text-tertiary);">Estudiantes con documentación o requisitos pendientes</div>
+                            </div>
+                            <a th:href="@{/coordinador/estudiantes}" class="btn btn-outline" style="padding:5px 10px; font-size:12px;">
+                                <i class="ti ti-eye"></i> Ver
+                            </a>
+                        </div>
+                        <div class="alert-item" style="align-items:center;">
+                            <div class="stat-icon si-blue" style="width:32px;height:32px;flex-shrink:0;">
+                                <i class="ti ti-chart-bar"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-weight:500; font-size:13px;">Análisis por programa</div>
+                                <div style="font-size:12px; color:var(--text-tertiary);">Tasa de habilitación por programa académico</div>
+                            </div>
+                            <a th:href="@{/coordinador/analisis}" class="btn btn-outline" style="padding:5px 10px; font-size:12px;">
+                                <i class="ti ti-eye"></i> Ver
+                            </a>
+                        </div>
+                        <div class="alert-item" style="align-items:center; border-bottom:none;">
+                            <div class="stat-icon si-red" style="width:32px;height:32px;flex-shrink:0;">
+                                <i class="ti ti-calendar-event"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-weight:500; font-size:13px;">Reporte de convocatorias</div>
+                                <div style="font-size:12px; color:var(--text-tertiary);">Resumen de convocatorias activas y cerradas</div>
+                            </div>
+                            <a th:href="@{/coordinador/convocatorias}" class="btn btn-outline" style="padding:5px 10px; font-size:12px;">
+                                <i class="ti ti-eye"></i> Ver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

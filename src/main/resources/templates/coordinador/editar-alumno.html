@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Editar Estudiante · Coordinador</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('alumnos')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Editar Estudiante')}"></div>
+        <main class="content-area">
+
+            <div th:if="${estudianteEditar == null}" class="card-block" style="text-align:center; padding:3rem;">
+                <i class="ti ti-alert-circle" style="font-size:48px; color:var(--border-secondary); display:block; margin-bottom:12px;"></i>
+                <div style="font-weight:600; color:var(--text-secondary);">Estudiante no encontrado.</div>
+                <a th:href="@{/coordinador/alumnos}" class="btn btn-secondary" style="margin-top:16px;">
+                    <i class="ti ti-arrow-left"></i> Volver
+                </a>
+            </div>
+
+            <div th:if="${estudianteEditar != null}">
+
+                <!-- Info actual -->
+                <div class="card-block" style="margin-bottom:1.5rem; padding:14px 20px;
+                     display:flex; align-items:center; gap:14px;">
+                    <div class="stat-icon si-blue" style="width:40px;height:40px;flex-shrink:0;">
+                        <i class="ti ti-user"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:15px;"
+                             th:text="${estudianteEditar.usuario.nombre + ' ' + estudianteEditar.usuario.apellido}">—</div>
+                        <div style="font-size:12px; color:var(--text-secondary);"
+                             th:text="'Doc: ' + ${estudianteEditar.documento}">—</div>
+                    </div>
+                    <div style="margin-left:auto;">
+                        <span th:if="${estudianteEditar.estadoInscripcion.name() == 'HABILITADO'}"    class="badge b-green">Habilitado</span>
+                        <span th:if="${estudianteEditar.estadoInscripcion.name() == 'PENDIENTE'}"     class="badge b-gold">Pendiente</span>
+                        <span th:if="${estudianteEditar.estadoInscripcion.name() == 'NO_HABILITADO'}" class="badge b-red">No habilitado</span>
+                    </div>
+                </div>
+
+                <!-- Formulario edición -->
+                <div class="card-block">
+                    <p class="section-title">Editar Datos del Estudiante</p>
+                    <form th:action="@{'/coordinador/alumnos/' + ${estudianteEditar.id} + '/editar'}"
+                          method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:1rem;">
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                    <i class="ti ti-user"></i> Nombre
+                                </label>
+                                <input class="form-control" type="text" name="nombre"
+                                       th:value="${estudianteEditar.usuario.nombre}" required/>
+                            </div>
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                    <i class="ti ti-user"></i> Apellido
+                                </label>
+                                <input class="form-control" type="text" name="apellido"
+                                       th:value="${estudianteEditar.usuario.apellido}" required/>
+                            </div>
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                    <i class="ti ti-mail"></i> Correo Electrónico
+                                </label>
+                                <input class="form-control" type="email" name="email"
+                                       th:value="${estudianteEditar.usuario.email}" required/>
+                            </div>
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                    <i class="ti ti-school"></i> Programa
+                                </label>
+                                <select class="form-control" name="programaId" required>
+                                    <option value="">Seleccionar programa</option>
+                                    <option th:each="p : ${programas}"
+                                            th:value="${p.id}"
+                                            th:text="${p.nombre}"
+                                            th:selected="${estudianteEditar.programa != null and estudianteEditar.programa.id == p.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:4px;">
+                                    <i class="ti ti-file-certificate"></i> Tipo Examen
+                                </label>
+                                <select class="form-control" name="tipoExamen">
+                                    <option value="">Sin asignar</option>
+                                    <option value="SABER_PRO"
+                                            th:selected="${estudianteEditar.tipoExamen != null and estudianteEditar.tipoExamen.name() == 'SABER_PRO'}">
+                                        Saber Pro
+                                    </option>
+                                    <option value="SABER_TYT"
+                                            th:selected="${estudianteEditar.tipoExamen != null and estudianteEditar.tipoExamen.name() == 'SABER_TYT'}">
+                                        Saber TyT
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:10px; margin-top:8px;">
+                            <button class="btn btn-secondary" type="submit">
+                                <i class="ti ti-device-floppy"></i> Guardar Cambios
+                            </button>
+                            <a th:href="@{/coordinador/alumnos}" class="btn btn-outline">
+                                <i class="ti ti-x"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

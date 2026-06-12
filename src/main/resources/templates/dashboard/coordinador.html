@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Dashboard Coordinador · Saber Pro UTS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div class="page-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></div>
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Dashboard Coordinador')}"></div>
+        <main class="content-area">
+
+            <!-- Stats -->
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon si-red"><i class="ti ti-users"></i></div>
+                    <div class="stat-label">Total Estudiantes</div>
+                    <div class="stat-value" th:text="${totalEstudiantes}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-circle-check"></i></div>
+                    <div class="stat-label">Con Resultados</div>
+                    <div class="stat-value" th:text="${conResultados}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-alert-circle"></i></div>
+                    <div class="stat-label">Sin Resultados</div>
+                    <div class="stat-value" th:text="${sinResultados}">0</div>
+                </div>
+            </div>
+
+            <!-- Opciones de gestión -->
+            <p class="section-title">Opciones de Gestión</p>
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+                <a th:href="@{/coordinador/alumnos}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                    <div class="stat-icon si-red"><i class="ti ti-user-plus"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Gestión de Alumnos (CRUD)</div>
+                </a>
+                <a th:href="@{/coordinador/informe-total}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                    <div class="stat-icon si-blue"><i class="ti ti-file-analytics"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Informe General de Alumnos</div>
+                </a>
+                <a th:href="@{/coordinador/informe-unico}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                    <div class="stat-icon si-green"><i class="ti ti-file-description"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Informe Detallado por Alumno</div>
+                </a>
+            </div>
+            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr); margin-top:0;">
+                <a th:href="@{/coordinador/informe-beneficios}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                    <div class="stat-icon si-gold"><i class="ti ti-gift"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Informe de Beneficios</div>
+                </a>
+                <a th:href="@{/coordinador/beneficios}" class="stat-card"
+                   style="text-decoration:none; cursor:pointer; text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                    <div class="stat-icon si-red"><i class="ti ti-file-text"></i></div>
+                    <div class="stat-label" style="font-weight:500;">Resolución Beneficios TyI</div>
+                </a>
+            </div>
+
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

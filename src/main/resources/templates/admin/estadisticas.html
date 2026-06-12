@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Estadísticas · Saber Pro UTS</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/saberpro.css}"/>
+</head>
+<body>
+<div style="display:flex; min-height:100vh;">
+    <div th:replace="~{fragments/sidebar :: sidebar('estadisticas')}"></div>
+
+    <div class="main-wrapper">
+        <div th:replace="~{fragments/header :: topbar('Estadísticas del Sistema')}"></div>
+
+        <main class="content-area">
+
+            <!-- Stats principales -->
+            <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ti ti-users"></i></div>
+                    <div class="stat-label">Total usuarios</div>
+                    <div class="stat-value" th:text="${totalUsuarios}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-blue"><i class="ti ti-user-check"></i></div>
+                    <div class="stat-label">Estudiantes</div>
+                    <div class="stat-value" th:text="${totalEstudiantes}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gold"><i class="ti ti-school"></i></div>
+                    <div class="stat-label">Programas</div>
+                    <div class="stat-value" th:text="${totalProgramas}">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-red"><i class="ti ti-chart-line"></i></div>
+                    <div class="stat-label">Tasa aprobación</div>
+                    <div class="stat-value" th:text="${tasaAprobacion + '%'}">0%</div>
+                </div>
+            </div>
+
+            <div class="two-cols" style="align-items:start;">
+
+                <!-- Distribución por rol -->
+                <div>
+                    <p class="section-title">Distribución de usuarios por rol</p>
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr><th>Rol</th><th>Cantidad</th><th>Porcentaje</th><th>Barra</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${usuariosPorRol}">
+                                    <td>
+                                        <span th:text="${item.rol}"
+                                              th:class="${item.rol == 'ADMIN'} ? 'badge b-gold' :
+                                                         (${item.rol == 'DOCENTE'} ? 'badge b-green' :
+                                                         (${item.rol == 'COORDINADOR'} ? 'badge b-blue' : 'badge b-red'))">
+                                        </span>
+                                    </td>
+                                    <td th:text="${item.total}">0</td>
+                                    <td th:text="${item.porcentaje + '%'}">0%</td>
+                                    <td>
+                                        <div style="background:var(--bg-tertiary); border-radius:4px; height:8px; width:100%; overflow:hidden;">
+                                            <div th:style="'width:' + ${item.porcentaje} + '%; height:100%; background:var(--uts-green); border-radius:4px;'"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Métricas académicas -->
+                <div>
+                    <p class="section-title">Métricas académicas</p>
+                    <div class="card-block">
+                        <div class="alert-item">
+                            <div class="alert-dot ad-green"></div>
+                            <div>
+                                <strong>Promedio general:</strong>
+                                <span th:text="${promedioGeneral + ' puntos'}">0 puntos</span>
+                            </div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-dot ad-blue" style="background:var(--uts-green);"></div>
+                            <div>
+                                <strong>Convocatorias activas:</strong>
+                                <span th:text="${totalConvocatorias}">0</span>
+                            </div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-dot ad-gold"></div>
+                            <div>
+                                <strong>Tasa de habilitación:</strong>
+                                <span th:text="${tasaAprobacion + '%'}">0%</span>
+                            </div>
+                        </div>
+                        <div class="alert-item">
+                            <div class="alert-dot ad-green"></div>
+                            <div>
+                                <strong>Programas activos:</strong>
+                                <span th:text="${totalProgramas}">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="section-title" style="margin-top:1rem;">Resumen del periodo</p>
+                    <div class="card-block">
+                        <div style="font-size:13px; color:var(--text-secondary); line-height:1.8;">
+                            El sistema cuenta con
+                            <strong th:text="${totalUsuarios}">0</strong> usuarios activos
+                            distribuidos en <strong th:text="${totalProgramas}">0</strong> programas académicos.
+                            La tasa de aprobación global es del
+                            <strong th:text="${tasaAprobacion + '%'}">0%</strong>,
+                            con un promedio de <strong th:text="${promedioGeneral}">0</strong> puntos.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
